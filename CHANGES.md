@@ -1,5 +1,9 @@
 # Changes
 
+# cordova-sqlcipher-xxx-legacy-ext-build 0.2.0-0xxx
+
+- Inculude pre-popuated database functionality (DISALBED for iOS, BROKEN and DISABLED for Windows)
+
 ## cordova-sqlcipher-adapter 0.1.7
 
 - Fix Windows build

@@ -170,6 +170,15 @@ sqlite_regexp(sqlite3_context * context, int argc, sqlite3_value ** values) {
 
             // NOTE: create DB from resource [pre-populated] NOT supported with sqlcipher.
 
+#if 0 // DISABLED for iOS:
+            /* Option to create database from resource (pre-populated) if it does not exist: */
+            if (![[NSFileManager defaultManager] fileExistsAtPath: dbname]) {
+                NSString * createFromResource = [options objectForKey:@"createFromResource"];
+                if (createFromResource != NULL)
+                    [self createFromResource: dbfilename withDbname: dbname];
+            }
+#endif
+
             if (sqlite3_open(name, &db) != SQLITE_OK) {
                 pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Unable to open DB"];
                 return;
@@ -212,6 +221,26 @@ sqlite_regexp(sqlite3_context * context, int argc, sqlite3_value ** values) {
 
     // NSLog(@"open cb finished ok");
 }
+
+#if 0 // DISABLED for iOS:
+-(void) createFromResource: (NSString *)dbfile withDbname:(NSString *)dbname {
+    NSString * bundleRoot = [[NSBundle mainBundle] resourcePath];
+    NSString * www = [bundleRoot stringByAppendingPathComponent:@"www"];
+    NSString * prepopulatedDb = [www stringByAppendingPathComponent: dbfile];
+    // NSLog(@"Look for pre-populated DB at: %@", prepopulatedDb);
+
+    if ([[NSFileManager defaultManager] fileExistsAtPath:prepopulatedDb]) {
+        NSLog(@"Found prepopulated DB: %@", prepopulatedDb);
+        NSError * error;
+        BOOL success = [[NSFileManager defaultManager] copyItemAtPath:prepopulatedDb toPath:dbname error:&error];
+
+        if(success)
+            NSLog(@"Copied pre-populated DB content to: %@", dbname);
+        else
+            NSLog(@"Unable to copy pre-populated DB file: %@", [error localizedDescription]);
+    }
+}
+#endif
 
 -(void) close: (CDVInvokedUrlCommand*)command
 {

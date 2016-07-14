@@ -224,12 +224,14 @@ public class SQLitePlugin extends CordovaPlugin {
      *
      * @param dbName   The name of the database file
      */
-    private SQLiteAndroidDatabase openDatabase(String dbname, String key, CallbackContext cbc, boolean old_impl) throws Exception {
+    private SQLiteAndroidDatabase openDatabase(String dbname, String key, boolean createFromResource, CallbackContext cbc, boolean ignored) throws Exception {
         try {
             // ASSUMPTION: no db (connection/handle) is already stored in the map
             // [should be true according to the code in DBRunner.run()]
 
             File dbfile = this.cordova.getActivity().getDatabasePath(dbname);
+
+            if (!dbfile.exists() && createFromResource) this.createFromResource(dbname, dbfile);
 
             if (!dbfile.exists()) {
                 dbfile.getParentFile().mkdirs();
@@ -251,8 +253,57 @@ public class SQLitePlugin extends CordovaPlugin {
         }
     }
 
-    // NOTE: createFromAssets (pre-populated DB) feature is not
-    // supported for SQLCipher.
+    /**
+     * Create from resource (assets) for pre-populated database
+     *
+     * If a prepopulated DB file exists in the assets folder it is copied to the dbPath.
+     * Only runs the first time the app runs.
+     */
+    private void createFromResource(String myDBName, File dbfile)
+    {
+        InputStream in = null;
+        OutputStream out = null;
+
+        try {
+            in = this.cordova.getActivity().getAssets().open("www/" + myDBName);
+            String dbPath = dbfile.getAbsolutePath();
+            dbPath = dbPath.substring(0, dbPath.lastIndexOf("/") + 1);
+
+            File dbPathFile = new File(dbPath);
+            if (!dbPathFile.exists())
+                dbPathFile.mkdirs();
+
+            File newDbFile = new File(dbPath + myDBName);
+            out = new FileOutputStream(newDbFile);
+
+            // XXX TODO: this is very primitive, other alternatives at:
+            // http://www.journaldev.com/861/4-ways-to-copy-file-in-java
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = in.read(buf)) > 0)
+                out.write(buf, 0, len);
+    
+            Log.v("info", "Copied prepopulated DB content to: " + newDbFile.getAbsolutePath());
+        } catch (IOException e) {
+            Log.v("createFromResource", "No prepopulated DB found, Error=" + e.getMessage());
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException ignored) {
+                    Log.v("info", "Error closing input DB file, ignored");
+                }
+            }
+    
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException ignored) {
+                    Log.v("info", "Error closing output DB file, ignored");
+                }
+            }
+        }
+    }
 
     /**
      * Close a database (in another thread).
@@ -335,6 +386,7 @@ public class SQLitePlugin extends CordovaPlugin {
     private class DBRunner implements Runnable {
         final String dbname;
         final String dbkey;
+        private boolean createFromResource;
 
         final BlockingQueue<DBQuery> q;
         final CallbackContext openCbc;
@@ -354,6 +406,7 @@ public class SQLitePlugin extends CordovaPlugin {
                 }
             }
             this.dbkey = key;
+            this.createFromResource = options.has("createFromResource");
 
             this.q = new LinkedBlockingQueue<DBQuery>();
             this.openCbc = cbc;
@@ -361,7 +414,7 @@ public class SQLitePlugin extends CordovaPlugin {
 
         public void run() {
             try {
-                this.mydb = openDatabase(dbname, this.dbkey, this.openCbc, false);
+                this.mydb = openDatabase(dbname, this.dbkey, this.createFromResource, this.openCbc, false);
             } catch (Exception e) {
                 Log.e(SQLitePlugin.class.getSimpleName(), "unexpected error, stopping db thread", e);
                 dbrmap.remove(dbname);
