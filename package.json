@@ -1,7 +1,7 @@
 {
-  "name": "cordova-sqlcipher-xxx-legacy-ext-build",
-  "version": "0.2.0-0xxx",
-  "description": "SQLCipher database adapter for PhoneGap/Cordova, based on cordova-sqlite-storage (XXX legacy ext build support)",
+  "name": "cordova-sqlcipher-legacy-extbuild-support",
+  "version": "0.2.0",
+  "description": "SQLCipher database adapter for PhoneGap/Cordova, based on cordova-sqlite-storage (legacy ext build support)",
   "cordova": {
     "id": "cordova-sqlcipher-xxx-legacy-ext-build",
     "platforms": [
@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/brodybits/Cordova-sqlcipher-adapter-xxx.git"
+    "url": "https://github.com/brodybits/Cordova-sqlcipher-legacy-extbuild-support.git"
   },
   "keywords": [
     "sqlite",
@@ -22,16 +22,10 @@
     "cordova-ios",
     "cordova-windows"
   ],
-  "engines": [
-    {
-      "name": "cordova",
-      "version": ">=3.3.0"
-    }
-  ],
   "author": "various",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/brodybits/Cordova-sqlcipher-adapter-xxx/issues"
+    "url": "https://github.com/brodybits/Cordova-sqlcipher-legacy-extbuild-support/issues"
   },
-  "homepage": "https://github.com/brodybits/Cordova-sqlcipher-adapter-xxx"
+  "homepage": "https://github.com/brodybits/Cordova-sqlcipher-legacy-extbuild-support"
 }
