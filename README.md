@@ -84,12 +84,12 @@ Some other projects by [@brodybits](https://github.com/brodybits):
   - iOS versions supported: 7.x/8.x/9.x
   - REGEXP is no longer supported for iOS.
 - In case of memory issues please use smaller transactions.
-- Pre-populatd DB is NOT supported by this version.
+- ~~Pre-populatd DB is NOT supported by this version.~~
 - Lawnchair adapter has *not* been validated with this version *and is not expected to work (see below)*.
 
 ## Announcements
 
-- Pre-poulated database support for Android ONLY (DISABLED for iOS, BROKEN and DISABLED for Windows)
+- Pre-poulated database support for all platforms Android/iOS/Windows)
 - SQLCipher version `3.4.0` for Android/iOS/Windows with FTS5 (all platforms) and JSON1 (Android/iOS)
 - Windows 10 UWP is now supported by this version - along with Windows 8.1 and Windows Phone 8.1
 - More explicit `openDatabase` and `deleteDatabase` `iosDatabaseLocation` option
@@ -348,7 +348,7 @@ window.openDatabase = function(dbname, ignored1, ignored2, ignored3) {
 
 ### Pre-populated database(s)
 
-For Android *ONLY*: put the database file in the `www` directory and open the database like:
+Put the database file in the `www` directory and open the database like (**both** database location and `createFromLocation` items are required):
 
 ```js
 var db = window.sqlitePlugin.openDatabase({name: "my.db", location: 'default', createFromLocation: 1});

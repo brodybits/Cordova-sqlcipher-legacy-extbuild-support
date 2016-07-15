@@ -55,7 +55,6 @@ module.exports = {
 		    //res = SQLitePluginRT.SQLitePlugin.openAsync(options.name);
 			var dbname = options.name;
 
-			/* BROKEN and DISABLED for Windows:
 			if (!!options.createFromResource) {
 				console.log("open pre-populated database " + dbname);
 				WinJS.Application.local.exists(dbname).done(function(isExisting) {
@@ -72,7 +71,7 @@ module.exports = {
 						// THANKS TO: http://stackoverflow.com/a/15905399
 						// answer to: http://stackoverflow.com/questions/15904374/how-to-create-a-blob-object-from-image-url
 						// linked from comment in: http://stackoverflow.com/questions/20555963/how-to-load-blob-from-windows-storage-storagefile-winjs#
-						var sourceUri = new Windows.Foundation.Uri("ms-appx:///www/pre.db");
+						var sourceUri = new Windows.Foundation.Uri("ms-appx:///www/"+dbname);
 						Windows.Storage.StorageFile.getFileFromApplicationUriAsync(sourceUri).then(function(f) {
 							return f.copyAsync(Windows.Storage.ApplicationData.current.localFolder);
 						}, function(e) {
@@ -97,7 +96,6 @@ module.exports = {
 
 				return;
 			}
-			// */
 
 			openImmediate(dbname);
 		} catch(ex) {
@@ -132,7 +130,6 @@ module.exports = {
 	    var options = args[0];
 	    var dbname = options.dbargs.dbname;
 		var executes = options.executes;
-	    //var executes = options.executes.map(function (e) { return [String(e.qid), e.sql, e.params]; });
 		var db = dbmap[dbname];
 		var results = [];
 		var i, count=executes.length;
@@ -153,14 +150,14 @@ module.exports = {
 				}
 				results.push({
 					type: "success",
-					qid: e.qid,
+					//qid: e.qid,
 					result: result
 				});
 			} catch(ex) {
 				console.log("sql exception error: " + ex.message);
 				results.push({
 					type: "error",
-					qid: e.qid,
+					//qid: e.qid,
 					result: { code: -1, message: ex.message }
 				});
 			}

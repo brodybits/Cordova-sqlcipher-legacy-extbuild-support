@@ -1,5 +1,9 @@
 # Changes
 
+# cordova-sqlcipher-legacy-extbuild-support 0.2.1-pre1
+
+- Fix pre-popuated database functionality for iOS and Windows
+
 # cordova-sqlcipher-legacy-extbuild-support 0.2.0
 
 - Inculude pre-popuated database functionality (DISALBED for iOS, BROKEN and DISABLED for Windows)

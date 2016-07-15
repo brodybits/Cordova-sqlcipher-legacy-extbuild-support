@@ -23,14 +23,11 @@ var mytests = function() {
       it(suiteName + 'preliminary cleanup',
         function(done) {
           expect(true).toBe(true);
-          //window.sqlitePlugin.deleteDatabase('pre.db', done, done);
           window.sqlitePlugin.deleteDatabase({name: 'pre.db', location: 0}, done, done);
         }, MYTIMEOUT);
 
       it(suiteName + 'Pre-populated database test',
         function(done) {
-          if (!isAndroid) pending('SKIP: NOT SUPPORTED for iOS & Windows');
-
           var dbc1 = window.sqlitePlugin.openDatabase({
             name: 'pre.db',
             location: 0,
@@ -51,8 +48,6 @@ var mytests = function() {
               check1 = true;
 
               // try some changes:
-              //tx.executeSql('DROP TABLE tt');
-              //tx.executeSql('CREATE TABLE tt (testcol)');
               tx.executeSql('DELETE FROM tt');
               tx.executeSql('INSERT INTO tt VALUES (?)', ['new-value']);
             });

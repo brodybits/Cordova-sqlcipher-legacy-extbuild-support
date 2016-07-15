@@ -1,9 +1,9 @@
 {
   "name": "cordova-sqlcipher-legacy-extbuild-support",
-  "version": "0.2.0",
+  "version": "0.2.1-pre1",
   "description": "SQLCipher database adapter for PhoneGap/Cordova, based on cordova-sqlite-storage (legacy ext build support)",
   "cordova": {
-    "id": "cordova-sqlcipher-xxx-legacy-ext-build",
+    "id": "cordova-sqlcipher-legacy-extbuild-support",
     "platforms": [
       "android",
       "ios",

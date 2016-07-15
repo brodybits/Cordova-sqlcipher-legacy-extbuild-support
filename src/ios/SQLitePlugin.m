@@ -168,16 +168,12 @@ sqlite_regexp(sqlite3_context * context, int argc, sqlite3_value ** values) {
 
             NSLog(@"open full db path: %@", dbname);
 
-            // NOTE: create DB from resource [pre-populated] NOT supported with sqlcipher.
-
-#if 0 // DISABLED for iOS:
             /* Option to create database from resource (pre-populated) if it does not exist: */
             if (![[NSFileManager defaultManager] fileExistsAtPath: dbname]) {
                 NSString * createFromResource = [options objectForKey:@"createFromResource"];
                 if (createFromResource != NULL)
                     [self createFromResource: dbfilename withDbname: dbname];
             }
-#endif
 
             if (sqlite3_open(name, &db) != SQLITE_OK) {
                 pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Unable to open DB"];
@@ -222,7 +218,6 @@ sqlite_regexp(sqlite3_context * context, int argc, sqlite3_value ** values) {
     // NSLog(@"open cb finished ok");
 }
 
-#if 0 // DISABLED for iOS:
 -(void) createFromResource: (NSString *)dbfile withDbname:(NSString *)dbname {
     NSString * bundleRoot = [[NSBundle mainBundle] resourcePath];
     NSString * www = [bundleRoot stringByAppendingPathComponent:@"www"];
@@ -240,7 +235,6 @@ sqlite_regexp(sqlite3_context * context, int argc, sqlite3_value ** values) {
             NSLog(@"Unable to copy pre-populated DB file: %@", [error localizedDescription]);
     }
 }
-#endif
 
 -(void) close: (CDVInvokedUrlCommand*)command
 {
