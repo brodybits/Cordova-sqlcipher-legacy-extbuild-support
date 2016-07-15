@@ -1,8 +1,9 @@
 # Changes
 
-# cordova-sqlcipher-legacy-extbuild-support 0.2.1-pre2
+# cordova-sqlcipher-legacy-extbuild-support 0.2.1-pre3
 
 - Fix Windows 10 ARM Release Build of SQLite3 by disabling SDL check (ARM Release only)
+- Fix Windows 8.1 Release Build of SQLite3 by disabling SDL check
 - Fix pre-popuated database functionality for iOS and Windows
 
 # cordova-sqlcipher-legacy-extbuild-support 0.2.0
