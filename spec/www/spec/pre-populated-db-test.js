@@ -9,7 +9,8 @@ var isAndroid = !isWindows && /Android/.test(navigator.userAgent);
 
 var pluginScenarioList = [ isAndroid ? 'Plugin-sqlite-connector' : 'Plugin', 'Plugin-android.database' ];
 
-var pluginScenarioCount = isAndroid ? 2 : 1;
+//var pluginScenarioCount = isAndroid ? 2 : 1;
+var pluginScenarioCount = 1;
 
 var mytests = function() {
 
@@ -23,14 +24,14 @@ var mytests = function() {
       it(suiteName + 'preliminary cleanup',
         function(done) {
           expect(true).toBe(true);
-          window.sqlitePlugin.deleteDatabase({name: 'pre.db', location: 0}, done, done);
+          window.sqlitePlugin.deleteDatabase({name: 'pre.db', location: 'default'}, done, done);
         }, MYTIMEOUT);
 
       it(suiteName + 'Pre-populated database test',
         function(done) {
           var dbc1 = window.sqlitePlugin.openDatabase({
             name: 'pre.db',
-            location: 0,
+            location: 'default',
             createFromLocation: 1,
             androidDatabaseImplementation: isOldDatabaseImpl ? 2 : 0
           });
@@ -61,7 +62,7 @@ var mytests = function() {
               // try opening it again:
               var dbc2 = window.sqlitePlugin.openDatabase({
                 name: 'pre.db',
-                location: 0,
+                location: 'default',
                 createFromLocation: 1,
                 androidDatabaseImplementation: isOldDatabaseImpl ? 2 : 0
               });
@@ -78,6 +79,78 @@ var mytests = function() {
                 });
               }, function(e) {
                 expect(false).toBe(true);
+                dbc2.close();
+                done();
+              }, function() {
+                expect(check2).toBe(true);
+                dbc2.close();
+                done();
+              });
+            });
+          });
+        }, MYTIMEOUT);
+
+      it(suiteName + 'preliminary cleanup of cipher-pre.db',
+        function(done) {
+          expect(true).toBe(true);
+          window.sqlitePlugin.deleteDatabase({name: 'cipher-pre.db', location: 'default'}, done, done);
+        }, MYTIMEOUT);
+
+      it(suiteName + 'Pre-populated encrypted database test',
+        function(done) {
+          var dbc1 = window.sqlitePlugin.openDatabase({
+            name: 'cipher-pre.db',
+            key: 'test-password',
+            location: 'default',
+            createFromLocation: 1
+          });
+
+          expect(dbc1).toBeDefined()
+
+          var check1 = false;
+
+          dbc1.transaction(function(tx) {
+
+            expect(tx).toBeDefined()
+
+            tx.executeSql('SELECT * from tt', [], function(tx, res) {
+              expect(res.rows.item(0).data).toEqual('test-value');
+              check1 = true;
+
+              // try some changes:
+              tx.executeSql('DELETE FROM tt');
+              tx.executeSql('INSERT INTO tt VALUES (?)', ['new-value']);
+            });
+          }, function(e) {
+            expect(false).toBe(true);
+            expect(JSON.stringify(e)).toBe('--');
+            expect(e.message).toBe('--');
+            dbc1.close();
+            done();
+          }, function() {
+            expect(check1).toBe(true);
+            dbc1.close(function() {
+              // try opening it again:
+              var dbc2 = window.sqlitePlugin.openDatabase({
+                name: 'cipher-pre.db',
+                key: 'test-password',
+                createFromLocation: 1
+              });
+
+              var check2 = false;
+
+              dbc2.transaction(function(tx) {
+                expect(tx).toBeDefined()
+
+                // verify that the changes were not overwritten:
+                tx.executeSql('SELECT * from tt', [], function(tx, res) {
+                  expect(res.rows.item(0).testcol).toEqual('new-value');
+                  check2 = true;
+                });
+              }, function(e) {
+                expect(false).toBe(true);
+                expect(JSON.stringify(e)).toBe('--');
+                expect(e.message).toBe('--');
                 dbc2.close();
                 done();
               }, function() {
